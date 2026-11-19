@@ -115,7 +115,7 @@ input:focus-visible, select:focus-visible, button:focus-visible, summary:focus-v
 
 /* Картки моделей */
 .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr)); gap: 14px; align-items: start; }
-.card { border: 1px solid var(--line); background: var(--bg); padding: 14px 14px 12px; content-visibility: auto; contain-intrinsic-size: auto 300px; }
+.card { border: 1px solid var(--line); background: var(--bg); padding: 14px 14px 12px; content-visibility: auto; contain-intrinsic-size: auto 390px; }
 .card.hl { outline: 3px solid var(--acc); }
 .ch { display: flex; justify-content: space-between; gap: 10px; align-items: flex-start; }
 .brand { font-size: 13px; color: var(--mut); font-weight: 700; }

@@ -90,6 +90,7 @@
     $("#topTabs").innerHTML = TOPS.map(function (t) { return '<button type="button" class="tab" role="tab" id="tab-' + t.id + '" aria-controls="topBox" aria-selected="' + (t.id === st.tab) + '" data-tab="' + t.id + '">' + t.t + "</button>"; }).join("");
     var T = TOPS.filter(function (t) { return t.id === st.tab; })[0];
     $("#topDesc").textContent = T.d;
+    $("#topBox").setAttribute("aria-labelledby", "tab-" + T.id);
     if (T.cards) { $("#topBox").innerHTML = pickCards(T.cards()); return; }
     var list = DATA.filter(T.f).sort(T.s).slice(0, 12);
     $("#topBox").innerHTML = '<ol class="tlist" aria-labelledby="tab-' + T.id + '">' + list.map(function (x, i) {
@@ -216,7 +217,20 @@
     var el = document.getElementById("m-" + id); if (!el) return;
     el.querySelector("details").open = true;
     el.classList.add("hl"); setTimeout(function () { el.classList.remove("hl"); }, 2500);
-    el.scrollIntoView({ behavior: reduceMotion() ? "auto" : "smooth", block: "start" });
+    var smooth = !reduceMotion();
+    el.scrollIntoView({ behavior: smooth ? "smooth" : "auto", block: "start" });
+    if (!smooth) return;
+    /* Картки з content-visibility отримують реальну висоту під час прокрутки, і ціль «з'їжджає».
+       Після завершення плавного скролу один раз доводимо точно до картки. */
+    var done = false;
+    function settle() {
+      if (done) return; done = true;
+      window.removeEventListener("scrollend", settle);
+      var top = el.getBoundingClientRect().top, pad = parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) || 0;
+      if (Math.abs(top - pad) > 8) el.scrollIntoView({ behavior: "auto", block: "start" });
+    }
+    if ("onscrollend" in window) window.addEventListener("scrollend", settle);
+    setTimeout(settle, 1500);
   }
   function refreshBtns() {
     Array.prototype.forEach.call(document.querySelectorAll(".card [data-cmp]"), function (btn) {
@@ -250,10 +264,12 @@
   syncInputs(); chart(); tops(); list(); cmp(); costs();
 
   /* Події */
-  var raf = 0;
+  /* Графік оновлюється щокадру, а сітку з 201 картки перебудовуємо, коли повзунок зупинився. */
+  var raf = 0, lt = 0;
   $("#budget").addEventListener("input", function (e) {
     st.budget = +e.target.value; $("#budV").textContent = eur(st.budget);
-    cancelAnimationFrame(raf); raf = requestAnimationFrame(function () { chart(); list(); save(); });
+    cancelAnimationFrame(raf); raf = requestAnimationFrame(chart);
+    clearTimeout(lt); lt = setTimeout(function () { list(); save(); }, 120);
   });
   var qt = 0;
   $("#q").addEventListener("input", function (e) { st.q = e.target.value; clearTimeout(qt); qt = setTimeout(function () { list(); save(); }, 150); });
