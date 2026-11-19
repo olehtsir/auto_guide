@@ -21,21 +21,32 @@
   var FUEL = { P: "Petrol", D: "Diesel", H: "Hybrid" };
   var KEY = "autogid26v2";
 
+  /* Мова: українська в коді, французька — data/fr.js (window.FR), вантажиться лише при виборі FR */
+  var LANG = "uk", FR = null;
+  try { LANG = (new URLSearchParams(location.search).get("lang") || localStorage.getItem("autogid-lang")) === "fr" ? "fr" : "uk"; } catch (e) {}
+  function t(s, v) {
+    var r = LANG === "fr" && FR && FR.ui[s] != null ? FR.ui[s] : s;
+    return v ? r.replace(/\{(\w+)\}/g, function (m, k) { return v[k] != null ? v[k] : m; }) : r;
+  }
+  function seg(k) { return t(SEG[k] || k); }
+  function hp(n) { return n + " " + t("hp"); }
+  function plural(n, one, few, many) { if (LANG === "fr") return n === 1 ? t(one) : t(many); var a = n % 10, b = n % 100; return a === 1 && b !== 11 ? one : a >= 2 && a <= 4 && (b < 10 || b >= 20) ? few : many; }
+
   function $(s) { return document.querySelector(s); }
-  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }).replace(/ (k?€)/g, "\u00a0$1"); }
   function grp(n) { return Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, " "); }
   function eur(n) { return grp(n) + " €"; }
   function num(v) { return String(v).replace(".", ","); }
   function kk(a) { return num(a[0]) + "–" + num(a[1]) + " k€"; }
-  function dots(r, what) { var h = ""; for (var i = 1; i <= 5; i++) h += '<b class="' + (i <= r ? "f" : "") + '"></b>'; return '<span class="dots" role="img" aria-label="' + (what || "надійність") + " " + r + ' з 5">' + h + "</span>"; }
+  function dots(r, what) { var h = ""; for (var i = 1; i <= 5; i++) h += '<b class="' + (i <= r ? "f" : "") + '"></b>'; return '<span class="dots" role="img" aria-label="' + esc(t("{w} {r} з 5", { w: t(what || "надійність"), r: r })) + '">' + h + "</span>"; }
   /* Фото з Wikimedia Commons: p = шлях файлу (a/ab/Name.jpg), мініатюри стандартних розмірів */
   var CW = "https://upload.wikimedia.org/wikipedia/commons/";
   function th(p, w) { return CW + "thumb/" + p + "/" + w + "px-" + p.split("/").pop(); }
   function srcset(p) { return [330, 500, 960].map(function (w) { return th(p, w) + " " + w + "w"; }).join(", "); }
   function filePage(p) { return "https://commons.wikimedia.org/wiki/File:" + p.split("/").pop(); }
-  function credit(f) { return '<a href="' + filePage(f.p) + '" target="_blank" rel="noopener">Фото: ' + esc(f.a) + " · " + esc(f.l) + "</a>"; }
-  function phLabel(f) { return (f.k === "i" ? "Салон" : "Зовні") + (f.y ? " · " + f.y : ""); }
-  function iqText(x) { return x.iq ? ["", "погано", "бюджетно", "середньо", "добре", "преміум"][x.iq] : ""; }
+  function credit(f) { return '<a href="' + filePage(f.p) + '" target="_blank" rel="noopener">' + t("Фото:") + " " + esc(f.a) + " · " + esc(f.l) + "</a>"; }
+  function phLabel(f) { return t(f.k === "i" ? "Салон" : "Зовні") + (f.y ? " · " + f.y : ""); }
+  function iqText(x) { return x.iq ? t(["", "погано", "бюджетно", "середньо", "добре", "преміум"][x.iq]) : ""; }
   function find(b, m, g) { for (var i = 0; i < DATA.length; i++) { var x = DATA[i]; if (x.b === b && x.m === m && (!g || x.g === g)) return x; } return null; }
   function byId(id) { for (var i = 0; i < DATA.length; i++) if (DATA[i].id === id) return DATA[i]; return null; }
   function mark(c) { return c === "+" ? ["ok", "+"] : c === "-" ? ["bad", "×"] : ["warn", "!"]; }
@@ -68,8 +79,8 @@
     $("#axis").children[1].innerHTML = [7, 10, 13, 16, 20].map(function (t) { return '<span style="left:' + pos(t) + '%">' + t + " k€</span>"; }).join("");
     var reach = PICKS.filter(function (p) { return p[4][0] <= b; });
     $("#finding").textContent = reach.length
-      ? "Budget " + eur(st.budget) + ": досяжні " + reach.length + " з 12 найкращих версій. Найкращий баланс — " + reach.slice(0, 3).map(function (p) { return short(p) + " " + p[2].split(" · ")[0]; }).join(", ").replace(/, ([^,]*)$/, " і $1") + "."
-      : "Budget " + eur(st.budget) + ": найкраще — Fabia 3 1.2 TSI, Polo 5 1.2 TSI, Yaris 3 1.5 або Auris 2 1.6.";
+      ? t("Budget {b}: досяжні {n} з 12 найкращих версій. Найкращий баланс — {list}.", { b: eur(st.budget), n: reach.length, list: reach.slice(0, 3).map(function (p) { return short(p) + " " + p[2].split(" · ")[0]; }).join(", ").replace(/, ([^,]*)$/, " " + t("і") + " $1") })
+      : t("Budget {b}: найкраще — Fabia 3 1.2 TSI, Polo 5 1.2 TSI, Yaris 3 1.5 або Auris 2 1.6.", { b: eur(st.budget) });
   }
 
   /* Топи */
@@ -77,11 +88,11 @@
     return '<div class="picks">' + arr.map(function (p, i) {
       var x = find(p[0], p[1], p[6]);
       var f = x && firstPhoto(x, "e");
-      return '<article class="pick">' + (f ? '<button type="button" class="pimg" data-ph="' + x.id + '" data-n="' + x.ph.indexOf(f) + '" aria-label="Фото: ' + esc(fullName(x)) + '"><img src="' + th(f.p, 500) + '" srcset="' + srcset(f.p) + '" sizes="(max-width: 700px) 92vw, 380px" alt="" loading="lazy" decoding="async"></button>' : "") +
+      return '<article class="pick">' + (f ? '<button type="button" class="pimg" data-ph="' + x.id + '" data-n="' + x.ph.indexOf(f) + '" aria-label="' + t("Фото:") + " " + esc(fullName(x)) + '"><img src="' + th(f.p, 500) + '" srcset="' + srcset(f.p) + '" sizes="(max-width: 700px) 92vw, 380px" alt="" loading="lazy" decoding="async"></button>' : "") +
         '<div class="rk">' + (i + 1) + "</div><h3>" + esc(p[1].indexOf(p[0]) === 0 ? p[1] : p[0] + " " + p[1]) + '</h3><div class="ver">' + esc(p[2]) + "</div>" +
-        "<dl><dt>Роки</dt><dd>" + esc(p[3]) + "</dd><dt>Price</dt><dd>" + kk(p[4]) + "</dd><dt>Надійність</dt><dd>" + (x ? dots(x.r) : "") + "</dd>" + (x && x.iq ? "<dt>Салон</dt><dd>" + dots(x.iq, "салон") + " " + iqText(x) + "</dd>" : "") +
-        (x && x.sp ? "<dt>Еталон</dt><dd>" + x.sp[1] + " hp · " + num(x.sp[3]) + " s · " + num(x.sp[4]) + " l</dd>" : "") + "</dl>" +
-        "<p>" + esc(p[5]) + '</p><button class="cbtn" type="button" data-open="' + (x ? x.id : "") + '">Відкрити сторінку моделі</button></article>';
+        "<dl><dt>" + t("Роки") + "</dt><dd>" + esc(p[3]) + "</dd><dt>" + t("Price") + "</dt><dd>" + kk(p[4]) + "</dd><dt>" + t("Надійність") + "</dt><dd>" + (x ? dots(x.r) : "") + "</dd>" + (x && x.iq ? "<dt>" + t("Салон") + "</dt><dd>" + dots(x.iq, "салон") + " " + iqText(x) + "</dd>" : "") +
+        (x && x.sp ? "<dt>" + t("Еталон") + "</dt><dd>" + hp(x.sp[1]) + " · " + num(x.sp[3]) + " s · " + num(x.sp[4]) + " l</dd>" : "") + "</dl>" +
+        "<p>" + esc(p[5]) + '</p><button class="cbtn" type="button" data-open="' + (x ? x.id : "") + '">' + t("Відкрити сторінку моделі") + "</button></article>";
     }).join("") + "</div>";
   }
   function firstPhoto(x, k) { for (var i = 0; i < x.ph.length; i++) if (x.ph[i].k === k) return x.ph[i]; return x.ph[0] || null; }
@@ -92,23 +103,23 @@
   var TOPS = [
     { id: "all", t: "Загалом", d: "Найкращий баланс надійності, ціни, салону і запчастин серед хетчбеків, седанів і універсалів.", cards: function () { return PICKS; } },
     { id: "suv", t: "SUV і 4x4", d: "Кросовери і джипи до 20 k€. 4x4/AWD — повний привід; 2WD — тільки передній, але дешевший у покупці, страховці й пальному.", cards: function () { return PICKS_SUV; } },
-    { id: "u10", t: "До 10 k€", d: "Надійні моделі, які реально знайти до 10 k€ — старші роки або більший пробіг. Price — діапазон для всього покоління.", f: function (x) { return good(x) && x.s !== "4x4" && x.p[0] < 8 && x.p[1] <= 22; }, s: byQ, v: function (x) { return sp(x, 1) + " hp"; } },
-    { id: "m15", t: "10–15 k€", d: "Надійні моделі, у яких нормальні екземпляри починаються приблизно з 8–12 k€.", f: function (x) { return good(x) && x.s !== "4x4" && x.p[0] >= 8 && x.p[0] < 12.5 && x.p[1] >= 14; }, s: byQ, v: function (x) { return sp(x, 1) + " hp"; } },
-    { id: "m20", t: "15–20 k€", d: "Новіші та більші машини: нормальні екземпляри — від 13 k€, найкращі — до 20 k€.", f: function (x) { return good(x) && x.s !== "4x4" && x.p[0] >= 12.5 && x.p[0] <= 19 && x.p[1] <= 46; }, s: byQ, v: function (x) { return sp(x, 1) + " hp"; } },
+    { id: "u10", t: "До 10 k€", d: "Надійні моделі, які реально знайти до 10 k€ — старші роки або більший пробіг. Price — діапазон для всього покоління.", f: function (x) { return good(x) && x.s !== "4x4" && x.p[0] < 8 && x.p[1] <= 22; }, s: byQ, v: function (x) { return hp(sp(x, 1)); } },
+    { id: "m15", t: "10–15 k€", d: "Надійні моделі, у яких нормальні екземпляри починаються приблизно з 8–12 k€.", f: function (x) { return good(x) && x.s !== "4x4" && x.p[0] >= 8 && x.p[0] < 12.5 && x.p[1] >= 14; }, s: byQ, v: function (x) { return hp(sp(x, 1)); } },
+    { id: "m20", t: "15–20 k€", d: "Новіші та більші машини: нормальні екземпляри — від 13 k€, найкращі — до 20 k€.", f: function (x) { return good(x) && x.s !== "4x4" && x.p[0] >= 12.5 && x.p[0] <= 19 && x.p[1] <= 46; }, s: byQ, v: function (x) { return hp(sp(x, 1)); } },
     { id: "rel", t: "Найнадійніші", d: "Оцінка надійності 5 з 5: мінімум поломок за TÜV, ADAC і відгуками власників.", f: function (x) { return x.r === 5; }, s: function (a, b) { return (b.t === "top") - (a.t === "top") || a.p[0] - b.p[0]; }, v: function (x) { return "5/5"; } },
-    { id: "cabin", t: "Найкращий салон", d: "Найякісніші матеріали й збирання: м'який пластик, без скрипів. Тільки надійні моделі до 16 k€ за ціною входу.", f: function (x) { return x.iq >= 4 && x.r >= 3 && x.t !== "avoid" && x.p[0] <= 16; }, s: function (a, b) { return b.iq - a.iq || quality(b) - quality(a); }, v: function (x) { return "салон " + x.iq + "/5"; } },
+    { id: "cabin", t: "Найкращий салон", d: "Найякісніші матеріали й збирання: м'який пластик, без скрипів. Тільки надійні моделі до 16 k€ за ціною входу.", f: function (x) { return x.iq >= 4 && x.r >= 3 && x.t !== "avoid" && x.p[0] <= 16; }, s: function (a, b) { return b.iq - a.iq || quality(b) - quality(a); }, v: function (x) { return t("салон") + " " + x.iq + "/5"; } },
     { id: "eco", t: "Найекономніші", d: "Найменша витрата пального еталонної версії (змішаний цикл, дані виробника).", f: function (x) { return x.sp && good(x) && x.p[0] <= 16; }, s: function (a, b) { return a.sp[4] - b.sp[4]; }, v: function (x) { return num(x.sp[4]) + " l/100"; } },
     { id: "boot", t: "Найбільший багажник", d: "Об'єм багажника еталонної версії (до шторки, сидіння підняті).", f: function (x) { return x.sp && x.sp[6] > 0 && x.r >= 3 && x.t !== "avoid" && x.p[0] <= 16; }, s: function (a, b) { return b.sp[6] - a.sp[6]; }, v: function (x) { return x.sp[6] + " l"; } },
     { id: "fast", t: "Найдинамічніші", d: "Найшвидший розгін 0–100 km/h серед еталонних версій.", f: function (x) { return x.sp && x.r >= 3 && x.t !== "avoid" && x.p[0] <= 15; }, s: function (a, b) { return a.sp[3] - b.sp[3]; }, v: function (x) { return num(x.sp[3]) + " s"; } },
-    { id: "young", t: "Для молодого водія", d: "До 130 hp, надійні й прості: дешевша страховка в перші роки (jeune conducteur) і ремонти.", f: function (x) { return good(x) && x.sp && x.sp[1] <= 130 && x.p[0] <= 15 && x.s !== "Sport" && x.s !== "4x4" && x.s !== "SUV-D"; }, s: byQ, v: function (x) { return x.sp[1] + " hp"; } },
-    { id: "fun", t: "Для задоволення", d: "Легкі, жваві, з механікою: купе, родстери і гарячі хетчі.", f: function (x) { return x.s === "Sport" || FUN.indexOf(x.id) >= 0; }, s: function (a, b) { return b.r - a.r || a.sp[3] - b.sp[3]; }, v: function (x) { return x.sp[1] + " hp · " + num(x.sp[3]) + " s"; } },
-    { id: "x4", t: "Справжні 4x4", d: "Позашляховики з рамою або пониженою передачею, плюс найкращі прості 4x4 для гір.", f: function (x) { return x.s === "4x4" || X4.indexOf(x.id) >= 0; }, s: function (a, b) { return b.r - a.r || a.p[0] - b.p[0]; }, v: function (x) { return x.sp ? x.sp[1] + " hp" : ""; } }
+    { id: "young", t: "Для молодого водія", d: "До 130 hp, надійні й прості: дешевша страховка в перші роки (jeune conducteur) і ремонти.", f: function (x) { return good(x) && x.sp && x.sp[1] <= 130 && x.p[0] <= 15 && x.s !== "Sport" && x.s !== "4x4" && x.s !== "SUV-D"; }, s: byQ, v: function (x) { return hp(x.sp[1]); } },
+    { id: "fun", t: "Для задоволення", d: "Легкі, жваві, з механікою: купе, родстери і гарячі хетчі.", f: function (x) { return x.s === "Sport" || FUN.indexOf(x.id) >= 0; }, s: function (a, b) { return b.r - a.r || a.sp[3] - b.sp[3]; }, v: function (x) { return hp(x.sp[1]) + " · " + num(x.sp[3]) + " s"; } },
+    { id: "x4", t: "Справжні 4x4", d: "Позашляховики з рамою або пониженою передачею, плюс найкращі прості 4x4 для гір.", f: function (x) { return x.s === "4x4" || X4.indexOf(x.id) >= 0; }, s: function (a, b) { return b.r - a.r || a.p[0] - b.p[0]; }, v: function (x) { return x.sp ? hp(x.sp[1]) : ""; } }
   ];
   function tops() {
-    if (!TOPS.some(function (t) { return t.id === st.tab; })) st.tab = "all";
-    $("#topTabs").innerHTML = TOPS.map(function (t) { return '<button type="button" class="tab" role="tab" id="tab-' + t.id + '" aria-controls="topBox" aria-selected="' + (t.id === st.tab) + '" data-tab="' + t.id + '">' + t.t + "</button>"; }).join("");
-    var T = TOPS.filter(function (t) { return t.id === st.tab; })[0];
-    $("#topDesc").textContent = T.d;
+    if (!TOPS.some(function (T) { return T.id === st.tab; })) st.tab = "all";
+    $("#topTabs").innerHTML = TOPS.map(function (T) { return '<button type="button" class="tab" role="tab" id="tab-' + T.id + '" aria-controls="topBox" aria-selected="' + (T.id === st.tab) + '" data-tab="' + T.id + '">' + t(T.t) + "</button>"; }).join("");
+    var T = TOPS.filter(function (o) { return o.id === st.tab; })[0];
+    $("#topDesc").textContent = t(T.d);
     $("#topBox").setAttribute("aria-labelledby", "tab-" + T.id);
     if (T.cards) { $("#topBox").innerHTML = pickCards(T.cards()); return; }
     var list = DATA.filter(T.f).sort(T.s).slice(0, 12);
@@ -121,27 +132,29 @@
   function specGrid(x) {
     if (!x.sp) return "";
     var s = x.sp;
-    return '<h4>Характеристики (еталон)</h4><dl class="sgrid"><dt>Версія</dt><dd>' + esc(s[0]) + "</dd><dt>Power</dt><dd>" + s[1] + " hp · " + s[2] + " Nm</dd><dt>0–100 km/h</dt><dd>" + num(s[3]) + " s</dd><dt>Витрата</dt><dd>" + num(s[4]) + " l/100 km (" + FUEL[x.f] + ")</dd><dt>Довжина</dt><dd>" + num((s[5] / 1000).toFixed(2)) + " m</dd><dt>Багажник</dt><dd>" + (s[6] ? s[6] + " l" : "кузов-пікап") + "</dd><dt>Маса</dt><dd>" + grp(s[7]) + " kg</dd><dt>Gearbox</dt><dd>" + (x.tr === "M" ? "Manual" : "Auto") + "</dd><dt>Привід</dt><dd>" + (x.awd ? "є версії 4x4 / AWD" : "передній / задній") + "</dd></dl>";
+    return '<dl class="sgrid"><dt>' + t("Версія") + "</dt><dd>" + esc(s[0]) + "</dd><dt>" + t("Power") + "</dt><dd>" + hp(s[1]) + " · " + s[2] + " Nm</dd><dt>0–100 km/h</dt><dd>" + num(s[3]) + " s</dd><dt>" + t("Витрата") + "</dt><dd>" + num(s[4]) + " l/100 km (" + t(FUEL[x.f]) + ")</dd><dt>" + t("Довжина") + "</dt><dd>" + num((s[5] / 1000).toFixed(2)) + " m</dd><dt>" + t("Багажник") + "</dt><dd>" + (s[6] ? s[6] + " l" : t("кузов-пікап")) + "</dd><dt>" + t("Маса") + "</dt><dd>" + grp(s[7]) + " kg</dd><dt>" + t("Gearbox") + "</dt><dd>" + (x.tr === "M" ? "Manual" : "Auto") + "</dd><dt>" + t("Привід") + "</dt><dd>" + t(x.awd ? "є версії 4x4 / AWD" : "передній / задній") + "</dd></dl>";
   }
   function href(x) { return "#model/" + x.id; }
   function pc40(v) { return Math.min(100, v / 40 * 100); }
-  function cmpBtn(x) { var on = st.cmp.indexOf(x.id) >= 0; return '<button class="cbtn' + (on ? " on" : "") + '" type="button" data-cmp="' + x.id + '" aria-pressed="' + on + '">' + (on ? "У порівнянні" : "Порівняти") + "</button>"; }
+  function cmpBtn(x) { var on = st.cmp.indexOf(x.id) >= 0; return '<button class="cbtn' + (on ? " on" : "") + '" type="button" data-cmp="' + x.id + '" aria-pressed="' + on + '">' + t(on ? "У порівнянні" : "Порівняти") + "</button>"; }
   function card(x) {
-    var specs = x.sp ? '<div class="specs"><span><b>' + x.sp[1] + "</b> hp</span><span><b>" + num(x.sp[3]) + "</b> s 0–100</span><span><b>" + num(x.sp[4]) + "</b> l/100</span><span><b>" + (x.sp[6] || "—") + "</b> l багажник</span></div>" : "";
+    var specs = x.sp ? '<div class="specs"><span><b>' + x.sp[1] + "</b> " + t("hp") + "</span><span><b>" + num(x.sp[3]) + "</b> s 0–100</span><span><b>" + num(x.sp[4]) + "</b> l/100</span><span><b>" + (x.sp[6] || "—") + "</b> " + t("l багажник") + "</span></div>" : "";
     var f = firstPhoto(x, "e");
     var nE = x.e.length;
     var img = f ? '<div class="cimg"><a href="' + href(x) + '" tabindex="-1" aria-hidden="true"><img src="' + th(f.p, 500) + '" srcset="' + srcset(f.p) + '" sizes="(max-width: 700px) 92vw, 400px" alt="" loading="lazy" decoding="async">' +
-      (x.ph.length > 1 ? '<span class="pcount">' + x.ph.length + " фото" + (x.ph.some(function (p) { return p.k === "i"; }) ? " · салон" : "") + "</span>" : "") + "</a>" +
+      (x.ph.length > 1 ? '<span class="pcount">' + x.ph.length + " " + t("фото") + (x.ph.some(function (p) { return p.k === "i"; }) ? " · " + t("салон") : "") + "</span>" : "") + "</a>" +
       '<span class="pcred">' + credit(f) + "</span></div>" : "";
     return '<article class="card" id="m-' + x.id + '">' + img +
-      '<div class="ch"><div><div class="brand">' + esc(x.b) + '</div><h3><a class="clink" href="' + href(x) + '">' + esc(x.m) + '</a></h3><div class="meta">' + esc(x.g) + " · " + esc(x.y) + " · " + esc(SEG[x.s] || x.s) + "</div></div>" +
-      '<span class="tier t-' + x.t + '">' + TIER[x.t] + "</span></div>" +
-      '<div class="prow"><span class="price">' + (x.pe ? "≈" : "") + kk(x.p) + '</span><span class="rates"><span class="dots">надійність ' + dots(x.r) + "</span>" + (x.iq ? '<span class="dots">салон ' + dots(x.iq, "салон") + "</span>" : "") + "</span></div>" +
+      '<div class="ch"><div><div class="brand">' + esc(x.b) + '</div><h3><a class="clink" href="' + href(x) + '">' + esc(x.m) + '</a></h3><div class="meta">' + esc(x.g) + " · " + esc(x.y) + " · " + esc(seg(x.s)) + "</div></div>" +
+      '<span class="tier t-' + x.t + '">' + t(TIER[x.t]) + "</span></div>" +
+      '<div class="prow"><span class="price">' + (x.pe ? "≈" : "") + kk(x.p) + '</span><span class="rates"><span class="dots">' + t("надійність") + " " + dots(x.r) + "</span>" + (x.iq ? '<span class="dots">' + t("салон") + " " + dots(x.iq, "салон") + "</span>" : "") + "</span></div>" +
       '<div class="mini" aria-hidden="true"><i style="left:' + pc40(x.p[0]) + "%;width:" + (pc40(x.p[1]) - pc40(x.p[0])) + '%"></i><u style="left:' + pc40(st.budget / 1000) + '%"></u></div>' +
-      specs + (x.sp ? '<div class="sref">еталон: ' + esc(x.sp[0]) + "</div>" : "") +
-      '<div class="tags">' + (x.m4 ? '<span class="tag y">Manual + 4-cyl petrol</span>' : "") + (x.awd ? '<span class="tag">4x4 / AWD</span>' : "") + (inBudget(x) ? '<span class="tag">В межах Budget</span>' : "") + "</div>" +
-      '<div class="bestl"><b>Брати:</b> ' + esc(x.best) + "</div>" +
-      '<div class="cact"><a class="more" href="' + href(x) + '">Детально: ' + nE + " " + (nE === 1 ? "мотор" : nE < 5 ? "мотори" : "моторів") + ", салон, фото →</a>" + cmpBtn(x) + "</div></article>";
+      specs + (x.sp ? '<div class="sref">' + t("еталон:") + " " + esc(x.sp[0]) + "</div>" : "") + tags(x) +
+      '<div class="bestl"><b>' + t("Брати:") + "</b> " + esc(x.best) + "</div>" +
+      '<div class="cact"><a class="more" href="' + href(x) + '">' + t("Детально: {n} {w}, салон, фото →", { n: nE, w: plural(nE, "мотор", "мотори", "моторів") }) + "</a>" + cmpBtn(x) + "</div></article>";
+  }
+  function tags(x) {
+    return '<div class="tags">' + (x.m4 ? '<span class="tag y">' + t("Manual + 4-cyl petrol") + "</span>" : "") + (x.awd ? '<span class="tag">4x4 / AWD</span>' : "") + (inBudget(x) ? '<span class="tag">' + t("В межах Budget") + "</span>" : "") + "</div>";
   }
 
   /* Сторінка моделі на весь екран: #model/<id> */
@@ -159,36 +172,36 @@
   }
   function page(x) {
     var main = firstPhoto(x, "e");
-    var gal = x.ph.length ? '<div class="mpgal"><button type="button" class="mpmain" data-ph="' + x.id + '" data-n="' + x.ph.indexOf(main) + '" aria-label="Фото на весь екран"><img src="' + th(main.p, 960) + '" srcset="' + [500, 960, 1280].map(function (w) { return th(main.p, w) + " " + w + "w"; }).join(", ") + '" sizes="(max-width: 900px) 100vw, 60vw" alt="' + esc(fullName(x) + " — " + phLabel(main).toLowerCase()) + '" decoding="async"></button>' +
+    var gal = x.ph.length ? '<div class="mpgal"><button type="button" class="mpmain" data-ph="' + x.id + '" data-n="' + x.ph.indexOf(main) + '" aria-label="' + t("Фото на весь екран") + '"><img src="' + th(main.p, 960) + '" srcset="' + [500, 960, 1280].map(function (w) { return th(main.p, w) + " " + w + "w"; }).join(", ") + '" sizes="(max-width: 900px) 100vw, 60vw" alt="' + esc(fullName(x) + " — " + phLabel(main).toLowerCase()) + '" decoding="async"></button>' +
       '<p class="mpcred">' + esc(phLabel(main)) + " · " + credit(main) + "</p>" +
-      (x.ph.length > 1 ? '<div class="thumbs">' + x.ph.map(function (f, i) { return '<button type="button" data-ph="' + x.id + '" data-n="' + i + '" aria-label="' + esc(phLabel(f)) + '"><img src="' + th(f.p, 250) + '" alt="" loading="lazy" decoding="async"><span>' + (f.k === "i" ? "Салон" : "Зовні") + "</span></button>"; }).join("") + "</div>" : "") + "</div>"
-      : '<div class="mpgal nophoto"><p>Вільних фото цього покоління поки немає.</p></div>';
+      (x.ph.length > 1 ? '<div class="thumbs">' + x.ph.map(function (f, i) { return '<button type="button" data-ph="' + x.id + '" data-n="' + i + '" aria-label="' + esc(phLabel(f)) + '"><img src="' + th(f.p, 250) + '" alt="" loading="lazy" decoding="async"><span>' + t(f.k === "i" ? "Салон" : "Зовні") + "</span></button>"; }).join("") + "</div>" : "") + "</div>"
+      : '<div class="mpgal nophoto"><p>' + t("Вільних фото цього покоління поки немає.") + "</p></div>";
     var groups = [["+", "ok", "Брати"], ["~", "warn", "З нюансами"], ["-", "bad", "Уникай"]].map(function (g) {
       var es = x.e.filter(function (s) { return s.charAt(0) === g[0]; });
       if (!es.length) return "";
-      return '<div class="eg"><h4><span class="v ' + g[1] + '">' + g[2] + "</span> · " + es.length + "</h4><ul class=\"engs\">" + es.map(function (s) { var p = engParts(s); var m = mark(s.charAt(0)); return '<li class="' + m[0] + '"><span class="mk ' + m[0] + '" aria-hidden="true">' + m[1] + "</span><b>" + esc(p[0]) + "</b>" + (p[1] ? "<span>" + esc(p[1]) + "</span>" : "") + "</li>"; }).join("") + "</ul></div>";
+      return '<div class="eg"><h4><span class="v ' + g[1] + '">' + t(g[2]) + "</span> · " + es.length + "</h4><ul class=\"engs\">" + es.map(function (s) { var p = engParts(s); var m = mark(s.charAt(0)); return '<li class="' + m[0] + '"><span class="mk ' + m[0] + '" aria-hidden="true">' + m[1] + "</span><b>" + esc(p[0]) + "</b>" + (p[1] ? "<span>" + esc(p[1]) + "</span>" : "") + "</li>"; }).join("") + "</ul></div>";
     }).join("");
     var ints = x.ph.filter(function (f) { return f.k === "i"; });
     var sim = similar(x);
     return '<div class="mphead">' + gal +
-      '<div class="mpinfo"><div class="brand">' + esc(x.b) + '</div><h2 id="mpT">' + esc(x.m) + '</h2><div class="meta">' + esc(x.g) + " · " + esc(x.y) + " · " + esc(SEG[x.s] || x.s) + "</div>" +
-      '<span class="tier t-' + x.t + '">' + TIER[x.t] + "</span>" +
-      '<div class="mpprice">' + (x.pe ? "≈" : "") + kk(x.p) + "<small>ціна 2026 у Франції за все покоління</small></div>" +
+      '<div class="mpinfo"><div class="brand">' + esc(x.b) + '</div><h2 id="mpT">' + esc(x.m) + '</h2><div class="meta">' + esc(x.g) + " · " + esc(x.y) + " · " + esc(seg(x.s)) + "</div>" +
+      '<span class="tier t-' + x.t + '">' + t(TIER[x.t]) + "</span>" +
+      '<div class="mpprice">' + (x.pe ? "≈" : "") + kk(x.p) + "<small>" + t("ціна 2026 у Франції за все покоління") + "</small></div>" +
       '<div class="mini" aria-hidden="true"><i style="left:' + pc40(x.p[0]) + "%;width:" + (pc40(x.p[1]) - pc40(x.p[0])) + '%"></i><u style="left:' + pc40(st.budget / 1000) + '%"></u></div>' +
-      '<dl class="mprate"><dt>Надійність</dt><dd>' + dots(x.r) + " " + x.r + "/5</dd>" + (x.iq ? "<dt>Салон</dt><dd>" + dots(x.iq, "салон") + " " + x.iq + "/5 · " + iqText(x) + "</dd>" : "") + "</dl>" +
-      '<div class="tags">' + (x.m4 ? '<span class="tag y">Manual + 4-cyl petrol</span>' : "") + (x.awd ? '<span class="tag">4x4 / AWD</span>' : "") + (inBudget(x) ? '<span class="tag">В межах Budget</span>' : "") + "</div>" +
-      '<div class="best"><b>Яку версію брати</b>' + esc(x.best) + "</div>" + cmpBtn(x) + "</div></div>" +
+      '<dl class="mprate"><dt>' + t("Надійність") + "</dt><dd>" + dots(x.r) + " " + x.r + "/5</dd>" + (x.iq ? "<dt>" + t("Салон") + "</dt><dd>" + dots(x.iq, "салон") + " " + x.iq + "/5 · " + iqText(x) + "</dd>" : "") + "</dl>" +
+      tags(x) +
+      '<div class="best"><b>' + t("Яку версію брати") + "</b>" + esc(x.best) + "</div>" + cmpBtn(x) + "</div></div>" +
       '<div class="verd big">' + esc(x.v) + "</div>" +
-      '<section class="mpsec"><h3>Мотори: що брати, що обходити</h3><p class="note">Перевір код мотора в сервісній книжці або за VIN — однакова назва буває в різних поколінь двигуна.</p><div class="egs">' + groups + "</div></section>" +
+      '<section class="mpsec"><h3>' + t("Мотори: що брати, що обходити") + '</h3><p class="note">' + t("Перевір код мотора в сервісній книжці або за VIN — однакова назва буває в різних поколінь двигуна.") + '</p><div class="egs">' + groups + "</div></section>" +
       '<div class="mpcols">' +
-      '<section class="mpsec"><h3>Коробка передач</h3><p>' + esc(x.gb) + "</p>" + (x.w.length ? "<h3>Слабкі місця</h3>" + bullets(x.w) : "") + (x.chk.length ? "<h3>Перевірити при огляді</h3>" + bullets(x.chk) : "") + "</section>" +
-      '<section class="mpsec">' + (x.iq ? "<h3>Салон</h3><p class=\"iq\">" + dots(x.iq, "салон") + " <b>" + x.iq + "/5 · " + iqText(x) + "</b></p><p>" + esc(x.inn) + "</p>" +
-        (ints.length ? '<div class="ithumbs">' + ints.map(function (f) { return '<button type="button" data-ph="' + x.id + '" data-n="' + x.ph.indexOf(f) + '" aria-label="Фото салону"><img src="' + th(f.p, 500) + '" alt="" loading="lazy" decoding="async"></button>'; }).join("") + "</div>" : "") : "") +
-        (x.sp ? "<h3>Характеристики еталона</h3>" + specGrid(x).replace("<h4>Характеристики (еталон)</h4>", "") : "") + "</section></div>" +
-      '<section class="mpsec"><h3>Що кажуть власники</h3><p>' + esc(x.rv) + "</p></section>" +
-      (sim.length ? '<section class="mpsec"><h3>Схожі альтернативи</h3><div class="alts">' + sim.map(miniCard).join("") + "</div></section>" : "");
+      '<section class="mpsec"><h3>' + t("Коробка передач") + "</h3><p>" + esc(x.gb) + "</p>" + (x.w.length ? "<h3>" + t("Слабкі місця") + "</h3>" + bullets(x.w) : "") + (x.chk.length ? "<h3>" + t("Перевірити при огляді") + "</h3>" + bullets(x.chk) : "") + "</section>" +
+      '<section class="mpsec">' + (x.iq ? "<h3>" + t("Салон") + "</h3><p class=\"iq\">" + dots(x.iq, "салон") + " <b>" + x.iq + "/5 · " + iqText(x) + "</b></p><p>" + esc(x.inn) + "</p>" +
+        (ints.length ? '<div class="ithumbs">' + ints.map(function (f) { return '<button type="button" data-ph="' + x.id + '" data-n="' + x.ph.indexOf(f) + '" aria-label="' + t("Фото салону") + '"><img src="' + th(f.p, 500) + '" alt="" loading="lazy" decoding="async"></button>'; }).join("") + "</div>" : "") : "") +
+        (x.sp ? "<h3>" + t("Характеристики еталона") + "</h3>" + specGrid(x) : "") + "</section></div>" +
+      '<section class="mpsec"><h3>' + t("Що кажуть власники") + "</h3><p>" + esc(x.rv) + "</p></section>" +
+      (sim.length ? '<section class="mpsec"><h3>' + t("Схожі альтернативи") + '</h3><div class="alts">' + sim.map(miniCard).join("") + "</div></section>" : "");
   }
-  var mp = { id: null, back: null, title: document.title, inApp: false };
+  var mp = { id: null, back: null, title: document.title, ukTitle: document.title, ukDesc: (document.querySelector('meta[name="description"]') || {}).content, inApp: false };
   function route() {
     var m = location.hash.match(/^#model\/([\w-]+)$/), x = m && byId(m[1]);
     var box = $("#mp");
@@ -219,7 +232,7 @@
     var r = DATA.filter(function (x) {
       return (!st.brand || x.b === st.brand) && (!st.seg || x.s === st.seg) && (!st.tier || x.t === st.tier) &&
         (!st.m4 || x.m4) && (!st.bud || inBudget(x)) && (!st.rel || x.r >= 4) && (!st.awd || x.awd) && (!st.iq || x.iq >= 4) &&
-        (!q || [x.b, x.m, x.g, x.y, x.best, x.v, x.rv, x.gb, x.inn, x.sp ? x.sp[0] : "", x.awd ? "4x4 awd" : "", SEG[x.s]].concat(x.e).join(" ").toLowerCase().indexOf(q) >= 0);
+        (!q || [x.b, x.m, x.g, x.y, x.best, x.v, x.rv, x.gb, x.inn, x.sp ? x.sp[0] : "", x.awd ? "4x4 awd" : "", seg(x.s)].concat(x.e).join(" ").toLowerCase().indexOf(q) >= 0);
     });
     var big = 1e9;
     var sorts = {
@@ -234,8 +247,8 @@
       b: function (a, b) { return a.b.localeCompare(b.b) || a.p[0] - b.p[0]; }
     };
     r.sort(sorts[st.sort] || sorts.fit);
-    $("#count").textContent = "Показано " + r.length + " з " + DATA.length;
-    $("#grid").innerHTML = r.length ? r.map(card).join("") : '<div class="empty">Нічого не знайдено. Зніми частину фільтрів.</div>';
+    $("#count").textContent = t("Показано {a} з {b}", { a: r.length, b: DATA.length });
+    $("#grid").innerHTML = r.length ? r.map(card).join("") : '<div class="empty">' + t("Нічого не знайдено. Зніми частину фільтрів.") + "</div>";
     $("#fIn").textContent = DATA.filter(function (x) { return x.r >= 4 && x.t !== "avoid" && x.t !== "risk" && inBudget(x); }).length;
   }
 
@@ -245,20 +258,20 @@
     document.body.classList.toggle("has-cbar", xs.length > 0);
     $("#cbarN").textContent = xs.length;
     if (!xs.length) {
-      $("#cmpBox").innerHTML = '<div class="empty">Поки нічого не вибрано.<br><button class="cbtn" type="button" id="cDemo">Приклад: Golf 7.5 vs Octavia 3 vs Mazda 3</button></div>';
+      $("#cmpBox").innerHTML = '<div class="empty">' + t("Поки нічого не вибрано.") + '<br><button class="cbtn" type="button" id="cDemo">' + t("Приклад: Golf 7.5 vs Octavia 3 vs Mazda 3") + "</button></div>";
       return;
     }
     function names(x, c) { var a = x.e.filter(function (s) { return s.charAt(0) === c; }).map(function (s) { return esc(s.slice(1).split(" — ")[0]); }); return a.length ? a.join("<br>") : "—"; }
     function S(i, f) { return function (x) { return x.sp ? f(x.sp[i]) : "—"; }; }
     var rows = [
       ["Роки", function (x) { return esc(x.y); }],
-      ["Кузов", function (x) { return esc(SEG[x.s] || x.s) + (x.awd ? " · 4x4/AWD" : ""); }],
+      ["Кузов", function (x) { return esc(seg(x.s)) + (x.awd ? " · 4x4/AWD" : ""); }],
       ["Price 2026", function (x) { return (x.pe ? "≈" : "") + kk(x.p); }],
       ["Надійність", function (x) { return dots(x.r); }],
       ["Салон", function (x) { return x.iq ? dots(x.iq, "салон") + " " + x.iq + "/5<br><small>" + esc(x.inn) + "</small>" : "—"; }],
-      ["Оцінка", function (x) { return '<span class="tier t-' + x.t + '">' + TIER[x.t] + "</span>"; }],
+      ["Оцінка", function (x) { return '<span class="tier t-' + x.t + '">' + t(TIER[x.t]) + "</span>"; }],
       ["Еталон", S(0, esc)],
-      ["Power", function (x) { return x.sp ? x.sp[1] + " hp · " + x.sp[2] + " Nm" : "—"; }],
+      ["Power", function (x) { return x.sp ? hp(x.sp[1]) + " · " + x.sp[2] + " Nm" : "—"; }],
       ["0–100", S(3, function (v) { return num(v) + " s"; })],
       ["Витрата", S(4, function (v) { return num(v) + " l/100"; })],
       ["Довжина", S(5, function (v) { return num((v / 1000).toFixed(2)) + " m"; })],
@@ -272,21 +285,21 @@
       ["Відгуки", function (x) { return esc(x.rv); }],
       ["Вердикт", function (x) { return "<b>" + esc(x.v) + "</b>"; }]
     ];
-    $("#cmpBox").innerHTML = '<div class="scroll"><table class="cmp"><thead><tr><th scope="col"><span class="sr">Параметр</span></th>' +
-      xs.map(function (x) { var f = firstPhoto(x, "e"); return '<th scope="col">' + (f ? '<button type="button" class="cmpimg" data-ph="' + x.id + '" data-n="' + x.ph.indexOf(f) + '" aria-label="Фото ' + esc(fullName(x)) + '"><img src="' + th(f.p, 330) + '" alt="" loading="lazy" decoding="async"></button>' : "") + '<span class="brand">' + esc(x.b) + '</span><br><a class="cn" href="' + href(x) + '">' + esc(x.m) + '</a><br><span class="meta">' + esc(x.g) + '</span><br><button class="cbtn" type="button" data-cmp="' + x.id + '">Прибрати</button></th>'; }).join("") +
-      "</tr></thead><tbody>" + rows.map(function (r) { return '<tr><th scope="row">' + r[0] + "</th>" + xs.map(function (x) { return "<td>" + r[1](x) + "</td>"; }).join("") + "</tr>"; }).join("") + "</tbody></table></div>";
+    $("#cmpBox").innerHTML = '<div class="scroll"><table class="cmp"><thead><tr><th scope="col"><span class="sr">' + t("Параметр") + "</span></th>" +
+      xs.map(function (x) { var f = firstPhoto(x, "e"); return '<th scope="col">' + (f ? '<button type="button" class="cmpimg" data-ph="' + x.id + '" data-n="' + x.ph.indexOf(f) + '" aria-label="' + t("Фото:") + " " + esc(fullName(x)) + '"><img src="' + th(f.p, 330) + '" alt="" loading="lazy" decoding="async"></button>' : "") + '<span class="brand">' + esc(x.b) + '</span><br><a class="cn" href="' + href(x) + '">' + esc(x.m) + '</a><br><span class="meta">' + esc(x.g) + '</span><br><button class="cbtn" type="button" data-cmp="' + x.id + '">' + t("Прибрати") + "</button></th>"; }).join("") +
+      "</tr></thead><tbody>" + rows.map(function (r) { return '<tr><th scope="row">' + t(r[0]) + "</th>" + xs.map(function (x) { return "<td>" + r[1](x) + "</td>"; }).join("") + "</tr>"; }).join("") + "</tbody></table></div>";
   }
 
   function costs() {
     $("#cgTable").tBodies[0].innerHTML = [4, 5, 6, 7, 8, 9, 10].map(function (c) { return "<tr><td>" + c + ' CV</td><td class="r">' + eur(c * 68.95 + 13.76) + "</td></tr>"; }).join("");
     var km = Math.max(0, +$("#km").value || 0), lp = Math.max(0, +$("#lp").value || 0), pp = Math.max(0, +$("#pp").value || 0);
     var f = km * lp / 100 * pp;
-    $("#fuelRes").textContent = eur(f) + " / рік";
-    $("#fuelSub").textContent = "≈ " + eur(f / 12) + " на місяць · " + grp(km * lp / 100) + " l пального";
-    var items = [["Carte grise (6 CV, IDF)", 6 * 68.95 + 13.76], ["Страховка tous risques, молодий водій, 1-й рік", 1800], ["Пальне", f], ["ТО і дрібниці", 450], ["Паркування, мийка, péage (оцінка)", 250]];
+    $("#fuelRes").textContent = eur(f) + " " + t("/ рік");
+    $("#fuelSub").textContent = t("≈ {m} на місяць · {l} l пального", { m: eur(f / 12), l: grp(km * lp / 100) });
+    var items = [["Carte grise (6 CV, IDF)", 6 * 68.95 + 13.76], [t("Страховка tous risques, молодий водій, 1-й рік"), 1800], [t("Пальне"), f], [t("ТО і дрібниці"), 450], [t("Паркування, мийка, péage (оцінка)"), 250]];
     var sum = items.reduce(function (a, b) { return a + b[1]; }, 0);
     $("#yearTable").tBodies[0].innerHTML = items.map(function (i) { return "<tr><td>" + i[0] + '</td><td class="r">' + eur(i[1]) + "</td></tr>"; }).join("") +
-      '<tr><td><b>Разом без ціни машини</b></td><td class="r"><b>' + eur(sum) + '</b></td></tr><tr><td>≈ на місяць</td><td class="r">' + eur(sum / 12) + "</td></tr>";
+      "<tr><td><b>" + t("Разом без ціни машини") + '</b></td><td class="r"><b>' + eur(sum) + "</b></td></tr><tr><td>" + t("≈ на місяць") + '</td><td class="r">' + eur(sum / 12) + "</td></tr>";
   }
 
   function stackLabels(table) {
@@ -323,7 +336,7 @@
   function refreshBtns() {
     Array.prototype.forEach.call(document.querySelectorAll(".card [data-cmp], .mp [data-cmp]"), function (btn) {
       var on = st.cmp.indexOf(btn.getAttribute("data-cmp")) >= 0;
-      btn.classList.toggle("on", on); btn.setAttribute("aria-pressed", on); btn.textContent = on ? "У порівнянні" : "Порівняти";
+      btn.classList.toggle("on", on); btn.setAttribute("aria-pressed", on); btn.textContent = t(on ? "У порівнянні" : "Порівняти");
     });
   }
   function toggleCmp(id) {
@@ -335,21 +348,107 @@
   function toast(msg) { var t = $("#toast"); t.textContent = msg; t.classList.add("show"); clearTimeout(tt0); tt0 = setTimeout(function () { t.classList.remove("show"); }, 2200); }
   function share() {
     var url = location.href.split("#")[0], title = document.title;
-    if (navigator.share) { navigator.share({ title: title, text: "Вживані авто у Франції за 7–20 k€: моделі, мотори, ціни, топи", url: url }).catch(function () {}); return; }
-    if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(url).then(function () { toast("Посилання скопійовано"); }, function () { toast(url); }); return; }
+    if (navigator.share) { navigator.share({ title: title, text: t("Вживані авто у Франції за 7–20 k€: моделі, мотори, ціни, топи"), url: url }).catch(function () {}); return; }
+    if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(url).then(function () { toast(t("Посилання скопійовано")); }, function () { toast(url); }); return; }
     toast(url);
+  }
+
+  /* Переклад даних: українські оригінали зберігаються в _uk, французькі беруться з FR */
+  function swapData() {
+    var fr = LANG === "fr" && FR;
+    DATA.forEach(function (x) {
+      if (!x._uk) x._uk = { e: x.e, gb: x.gb, w: x.w, rv: x.rv, chk: x.chk, best: x.best, v: x.v, inn: x.inn, y: x.y };
+      var o = x._uk, f = fr && FR.models[x.id];
+      ["e", "gb", "w", "rv", "chk", "best", "v"].forEach(function (k) { x[k] = f && f[k] != null ? f[k] : o[k]; });
+      x.inn = fr && FR.interior[x.id] != null ? FR.interior[x.id] : o.inn;
+      x.y = fr ? o.y.replace("нині", t("нині")) : o.y;
+    });
+    [[PICKS, "picks"], [PICKS_SUV, "picksSuv"]].forEach(function (pair) {
+      pair[0].forEach(function (p, i) {
+        if (!p._uk) p._uk = [p[2], p[5]];
+        var f = fr && FR[pair[1]][i];
+        p[2] = f ? f[0] : p._uk[0]; p[5] = f ? f[1] : p._uk[1];
+      });
+    });
+    BRANDS.forEach(function (b, i) { if (!b._uk) b._uk = [b[1], b[2]]; var f = fr && FR.brands[i]; b[1] = f ? f[0] : b._uk[0]; b[2] = f ? f[1] : b._uk[1]; });
+    ENGINES.forEach(function (e, i) { if (!e._uk) e._uk = [e[0], e[1], e[3]]; var f = fr && FR.engines[i]; e[0] = f ? f[0] : e._uk[0]; e[1] = f ? f[1] : e._uk[1]; e[3] = f ? f[2] : e._uk[2]; });
+    GLOSSARY.forEach(function (g, i) { if (!g._uk) g._uk = g.slice(0, 3); var f = fr && FR.glossary[i]; for (var k = 0; k < 3; k++) g[k] = f ? f[k] : g._uk[k]; });
+  }
+  /* Статичні тексти сторінки: елементи з data-i (вміст) і data-i-a (aria-label) */
+  function applyStatic() {
+    var fr = LANG === "fr" && FR;
+    Array.prototype.forEach.call(document.querySelectorAll("[data-i]"), function (el) {
+      if (el._uk == null) el._uk = el.innerHTML;
+      var v = fr ? FR.html[el.getAttribute("data-i")] : null;
+      el.innerHTML = v != null ? v : el._uk;
+    });
+    Array.prototype.forEach.call(document.querySelectorAll("[data-i-a]"), function (el) {
+      if (el._uka == null) el._uka = el.getAttribute("aria-label");
+      var v = fr ? FR.html[el.getAttribute("data-i-a")] : null;
+      el.setAttribute("aria-label", v != null ? v.replace(/<[^>]+>/g, "") : el._uka);
+      if (el.hasAttribute("title")) el.setAttribute("title", el.getAttribute("aria-label"));
+    });
+    if (!mp.ukTitle) { mp.ukTitle = document.title; mp.ukDesc = document.querySelector('meta[name="description"]').content; }
+    mp.title = fr ? FR.meta.title : mp.ukTitle;
+    if (!mp.id) document.title = mp.title;
+    document.querySelector('meta[name="description"]').content = fr ? FR.meta.desc : mp.ukDesc;
+    document.documentElement.lang = LANG === "fr" ? "fr" : "uk";
+    Array.prototype.forEach.call(document.querySelectorAll("[data-lang]"), function (b) { b.setAttribute("aria-pressed", b.getAttribute("data-lang") === LANG); });
+    themeLabel();
+  }
+  function applyLang() {
+    swapData(); applyStatic(); renderAll();
+    if (mp.id) { var id = mp.id; mp.id = null; route(); if (!mp.id) mp.id = id; }
+    document.documentElement.classList.remove("i18n-wait");
+  }
+  function loadFR(cb) {
+    if (FR) return cb();
+    var s = document.createElement("script");
+    s.src = "data/fr.js";
+    s.onload = function () { FR = window.FR || null; if (!FR) LANG = "uk"; cb(); };
+    s.onerror = function () { LANG = "uk"; cb(); toast("Не вдалося завантажити французьку версію"); };
+    document.head.appendChild(s);
+  }
+  function setLang(l) {
+    LANG = l === "fr" ? "fr" : "uk";
+    try { localStorage.setItem("autogid-lang", LANG); } catch (e) {}
+    try {
+      var u = new URL(location.href);
+      if (LANG === "fr") u.searchParams.set("lang", "fr"); else u.searchParams.delete("lang");
+      history.replaceState(history.state, "", u.pathname + u.search + u.hash);
+    } catch (e) {}
+    loadFR(applyLang);
+  }
+
+  /* Тема: авто (як у системі) → світла → темна */
+  var THEMES = ["auto", "light", "dark"], THEME_N = { auto: "авто", light: "світла", dark: "темна" };
+  function curTheme() { return document.documentElement.getAttribute("data-theme") || "auto"; }
+  function themeLabel() { var b = $("#themeBtn"); if (!b) return; var l = t("Тема: {n}", { n: t(THEME_N[curTheme()]) }); b.setAttribute("aria-label", l); b.title = l; }
+  function setTheme(th) {
+    var d = document.documentElement;
+    if (th === "auto") d.removeAttribute("data-theme"); else d.setAttribute("data-theme", th);
+    try { if (th === "auto") localStorage.removeItem("autogid-theme"); else localStorage.setItem("autogid-theme", th); } catch (e) {}
+    Array.prototype.forEach.call(document.querySelectorAll('meta[name="theme-color"]'), function (m, i) {
+      if (!m._c) m._c = m.content;
+      m.content = th === "light" ? "#ffffff" : th === "dark" ? "#15110f" : m._c;
+    });
+    themeLabel();
   }
 
   /* Початкове заповнення */
   var brands = DATA.map(function (x) { return x.b; }).filter(function (v, i, a) { return a.indexOf(v) === i; }).sort(function (a, b) { return a.localeCompare(b); });
   $("#fBrand").insertAdjacentHTML("beforeend", brands.map(function (b) { return "<option>" + esc(b) + "</option>"; }).join(""));
-  $("#fSeg").insertAdjacentHTML("beforeend", Object.keys(SEG).map(function (k) { return '<option value="' + k + '">' + SEG[k] + "</option>"; }).join(""));
   $("#fM").textContent = DATA.length; $("#fB").textContent = brands.length;
-  $("#brandList").innerHTML = BRANDS.map(function (b) { return '<div class="' + b[0] + '"><b>' + esc(b[1]) + "</b><p>" + esc(b[2]) + "</p></div>"; }).join("");
-  $("#engTable").tBodies[0].innerHTML = ENGINES.map(function (e) { return "<tr><td><b>" + esc(e[0]) + "</b></td><td>" + esc(e[1]) + '</td><td><span class="v ' + e[2] + '">' + VERD[e[2]] + "</span></td><td>" + esc(e[3]) + "</td></tr>"; }).join("");
-  $("#glTable").tBodies[0].innerHTML = GLOSSARY.map(function (g) { return "<tr><td><b>" + esc(g[0]) + "</b></td><td>" + esc(g[1]) + "</td><td>" + esc(g[2]) + "</td></tr>"; }).join("");
-  stackLabels($("#engTable")); stackLabels($("#glTable"));
-  syncInputs(); chart(); tops(); list(); cmp(); costs();
+  function staticLists() {
+    var fs = $("#fSeg"); while (fs.options.length > 1) fs.remove(1);
+    fs.insertAdjacentHTML("beforeend", Object.keys(SEG).map(function (k) { return '<option value="' + k + '">' + esc(seg(k)) + "</option>"; }).join(""));
+    $("#brandList").innerHTML = BRANDS.map(function (b) { return '<div class="' + b[0] + '"><b>' + esc(b[1]) + "</b><p>" + esc(b[2]) + "</p></div>"; }).join("");
+    $("#engTable").tBodies[0].innerHTML = ENGINES.map(function (e) { return "<tr><td><b>" + esc(e[0]) + "</b></td><td>" + esc(e[1]) + '</td><td><span class="v ' + e[2] + '">' + t(VERD[e[2]]) + "</span></td><td>" + esc(e[3]) + "</td></tr>"; }).join("");
+    $("#glTable").tBodies[0].innerHTML = GLOSSARY.map(function (g) { return "<tr><td><b>" + esc(g[0]) + "</b></td><td>" + esc(g[1]) + "</td><td>" + esc(g[2]) + "</td></tr>"; }).join("");
+    stackLabels($("#engTable")); stackLabels($("#glTable"));
+  }
+  function renderAll() { staticLists(); syncInputs(); chart(); tops(); list(); cmp(); costs(); }
+  renderAll();
 
   /* Події */
   /* Графік оновлюється щокадру, а сітку з 201 картки перебудовуємо, коли повзунок зупинився. */
@@ -377,6 +476,8 @@
 
   document.addEventListener("click", function (e) {
     var t = e.target;
+    var lg = t.closest("[data-lang]"); if (lg) { if (lg.getAttribute("data-lang") !== LANG) setLang(lg.getAttribute("data-lang")); return; }
+    if (t.closest("#themeBtn")) { setTheme(THEMES[(THEMES.indexOf(curTheme()) + 1) % 3]); return; }
     var ph = t.closest("[data-ph]"); if (ph) { lbOpen(ph.getAttribute("data-ph"), +ph.getAttribute("data-n")); return; }
     if (t.id === "lb") { lbClose(); return; }
     var tb = t.closest("[data-tab]"); if (tb) { st.tab = tb.getAttribute("data-tab"); save(); tops(); var nb = document.getElementById("tab-" + st.tab); if (nb) nb.scrollIntoView({ block: "nearest", inline: "nearest" }); return; }
@@ -394,11 +495,13 @@
   $("#mpShare").addEventListener("click", function () {
     var x = byId(mp.id); if (!x) return;
     var url = location.href.split("#")[0] + href(x);
-    if (navigator.share) { navigator.share({ title: fullName(x) + " — Авто-гід 2026", url: url }).catch(function () {}); return; }
-    if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(url).then(function () { toast("Посилання на модель скопійовано"); }, function () { toast(url); }); return; }
+    if (navigator.share) { navigator.share({ title: fullName(x) + " — " + mp.title, url: url }).catch(function () {}); return; }
+    if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(url).then(function () { toast(t("Посилання на модель скопійовано")); }, function () { toast(url); }); return; }
     toast(url);
   });
   route();
+  setTheme(curTheme());
+  if (LANG === "fr") { loadFR(applyLang); setTimeout(function () { document.documentElement.classList.remove("i18n-wait"); }, 4000); }
   $("#lbPrev").addEventListener("click", function () { lbStep(-1); });
   $("#lbNext").addEventListener("click", function () { lbStep(1); });
   $("#lbClose").addEventListener("click", lbClose);

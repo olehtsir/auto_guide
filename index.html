@@ -6,7 +6,16 @@
 <title>Авто-гід 2026</title>
 <meta name="description" content="Вживані авто у Франції за 7–20 k€: 201 модель, характеристики, мотори (TSI, Skyactiv, Hybrid), коробки (Manual, DSG, EDC, EAT8), ціни 2026, надійність, відгуки і топи.">
 <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#120d0b" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#15110f" media="(prefers-color-scheme: dark)">
+<script>
+/* Тема й мова — до першого малювання, щоб сторінка не блимала */
+try {
+  var d = document.documentElement, t = localStorage.getItem("autogid-theme");
+  if (t === "light" || t === "dark") d.setAttribute("data-theme", t);
+  var l = new URLSearchParams(location.search).get("lang") || localStorage.getItem("autogid-lang");
+  if (l === "fr") { d.lang = "fr"; d.className += " i18n-wait"; }
+} catch (e) {}
+</script>
 <meta name="color-scheme" content="light dark">
 <meta property="og:title" content="Авто-гід 2026 — вживані авто у Франції за 7–20 k€">
 <meta property="og:description" content="201 модель: характеристики, мотори, коробки, ціни 2026, надійність, відгуки власників і топи.">
@@ -23,24 +32,24 @@
 <link rel="manifest" href="site.webmanifest">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sofia+Sans+Condensed:wght@700;800&family=Sofia+Sans:wght@400;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
 <link rel="stylesheet" href="assets/style.css">
 </head>
 <body>
-<a class="skip" href="#catalog">Перейти до моделей</a>
+<a class="skip" href="#catalog" data-i="skip">Перейти до моделей</a>
 
 <header class="band" id="top">
 <div class="wrap">
 <div class="hero">
 <div>
-<h1>Авто-гід 2026: вживані авто у Франції за 7–20 k€</h1>
+<h1 data-i="h1">Авто-гід 2026: вживані авто у Франції за 7–20 k€</h1>
 <p class="lead" id="finding">Характеристики, мотори, коробки, ціни 2026, надійність і відгуки власників — для 201 моделі.</p>
-<button type="button" class="cbtn share" id="share">Поділитися сайтом</button>
+<button type="button" class="cbtn share" id="share" data-i="shareBtn">Поділитися сайтом</button>
 </div>
 <div class="figs">
-<div class="fig1"><div class="num" id="fM">201</div><span>моделей</span></div>
-<div class="fig1"><div class="num" id="fB">29</div><span>марок</span></div>
-<div class="fig1"><div class="num" id="fIn">—</div><span>надійних у межах Budget</span></div>
+<div class="fig1"><div class="num" id="fM">201</div><span data-i="figM">моделей</span></div>
+<div class="fig1"><div class="num" id="fB">29</div><span data-i="figB">марок</span></div>
+<div class="fig1"><div class="num" id="fIn">—</div><span data-i="figIn">надійних у межах Budget</span></div>
 </div>
 </div>
 <div class="ctrl">
@@ -48,92 +57,95 @@
 <input type="range" id="budget" min="7000" max="20000" step="500" value="15000" aria-describedby="budV">
 <output class="bud" id="budV" for="budget">15 000 €</output>
 </div>
-<div class="chart" id="chart" aria-label="Ціни 2026 на топ-12 версій"></div>
+<div class="chart" id="chart" data-i-a="chartAria" aria-label="Ціни 2026 на топ-12 версій"></div>
 <div class="axis" id="axis" aria-hidden="true"><span></span><div></div><span></span></div>
-<p class="note">Топ-12 загалом: найкращий баланс надійності, ціни, салону і запчастин. Смуга — типова ціна 2026 у Франції (Prix TTC) для вказаної версії з пробігом до ~130k km. Помаранчеві — досяжні з обраним Budget. Натисни рядок — відкриється сторінка моделі.</p>
+<p class="note" data-i="chartNote">Топ-12 загалом: найкращий баланс надійності, ціни, салону і запчастин. Смуга — типова ціна 2026 у Франції (Prix TTC) для вказаної версії з пробігом до ~130k km. Помаранчеві — досяжні з обраним Budget. Натисни рядок — відкриється сторінка моделі.</p>
 </div>
 </header>
 
-<nav class="sec" aria-label="Розділи"><div class="scroll">
-<a href="#tops">Топи</a><a href="#catalog">Усі моделі</a><a href="#compare">Порівняння</a><a href="#brands">Марки</a><a href="#engines">Engines</a><a href="#glossary">Словник FR</a><a href="#buy">Як купити</a><a href="#costs">Витрати</a><a href="#sources">Джерела</a>
-</div></nav>
+<nav class="sec" aria-label="Розділи" data-i-a="navAria"><div class="navin"><div class="scroll">
+<a href="#tops" data-i="navTops">Топи</a><a href="#catalog" data-i="navCat">Усі моделі</a><a href="#compare" data-i="navCmp">Порівняння</a><a href="#brands" data-i="navBrands">Марки</a><a href="#engines" data-i="navEng">Engines</a><a href="#glossary" data-i="navGl">Словник FR</a><a href="#buy" data-i="navBuy">Як купити</a><a href="#costs" data-i="navCosts">Витрати</a><a href="#sources" data-i="navSrc">Джерела</a>
+</div><div class="tools">
+<div class="lang" role="group" aria-label="Мова / Langue"><button type="button" data-lang="uk" aria-pressed="true" lang="uk" title="Українська">UA</button><button type="button" data-lang="fr" aria-pressed="false" lang="fr" title="Français">FR</button></div>
+<button type="button" class="tbtn" id="themeBtn" aria-label="Тема: авто" title="Тема: авто"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><g class="i-auto"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 4a8 8 0 0 1 0 16z" fill="currentColor"/></g><g class="i-light"><circle cx="12" cy="12" r="4.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></g><g class="i-dark"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></g></svg></button>
+</div></div></nav>
 
 <main>
 <section class="band alt" id="tops"><div class="wrap">
-<h2>Топи 2026</h2>
+<h2 data-i="topsH">Топи 2026</h2>
 <p id="topDesc">Найкращий баланс надійності, ціни й салону серед компактних і седанів.</p>
-<div class="tabs scroll" role="tablist" aria-label="Топи" id="topTabs"></div>
+<div class="tabs scroll" role="tablist" aria-label="Топи" data-i-a="topsAria" id="topTabs"></div>
 <div id="topBox" role="tabpanel" tabindex="0"></div>
 </div></section>
 
 <section class="band" id="catalog"><div class="wrap">
-<h2>Усі моделі: розбір і характеристики</h2>
-<p>Engines позначені: <span class="v ok">+ надійний</span> · <span class="v warn">! з нюансами</span> · <span class="v bad">× уникай</span>. Тільки моделі, які реально знайти за 7–20 k€; мінівенів і бусиків немає. Price — діапазон 2026 у Франції для всього покоління в k€; «≈» — оцінка, де немає зведених даних. Характеристики — для еталонної (рекомендованої) версії, дані виробника. Салон 1–5: 5 — м'які матеріали майже скрізь, 3 — м'який верх панелі, решта твердий пластик, 1 — дешевий пластик, що скрипить. Натисни на модель — відкриється її сторінка: усі мотори, коробки, салон, фото зовні й усередині, слабкі місця й альтернативи.</p>
+<h2 data-i="catH">Усі моделі: розбір і характеристики</h2>
+<p data-i="catP">Engines позначені: <span class="v ok">+ надійний</span> · <span class="v warn">! з нюансами</span> · <span class="v bad">× уникай</span>. Тільки моделі, які реально знайти за 7–20 k€; мінівенів і бусиків немає. Price — діапазон 2026 у Франції для всього покоління в k€; «≈» — оцінка, де немає зведених даних. Характеристики — для еталонної (рекомендованої) версії, дані виробника. Салон 1–5: 5 — м'які матеріали майже скрізь, 3 — м'який верх панелі, решта твердий пластик, 1 — дешевий пластик, що скрипить. Натисни на модель — відкриється її сторінка: усі мотори, коробки, салон, фото зовні й усередині, слабкі місця й альтернативи.</p>
 <div class="filters">
-<label for="q">Пошук<input type="search" id="q" placeholder="Golf, 1.4 TSI, Hybrid, 4x4…" autocomplete="off" enterkeyhint="search"></label>
-<label for="fBrand">Марка<select id="fBrand"><option value="">Усі марки</option></select></label>
-<label for="fSeg">Кузов<select id="fSeg"><option value="">Усі</option></select></label>
-<label for="fTier">Оцінка<select id="fTier"><option value="">Будь-яка</option><option value="top">Рекомендую</option><option value="ok">Хороша</option><option value="risk">Тільки окремі версії</option><option value="avoid">Уникай</option></select></label>
-<label for="fSort">Сортувати<select id="fSort"><option value="fit">Рекомендовані</option><option value="r">Надійність</option><option value="iq">Якість салону</option><option value="p">Price: від дешевих</option><option value="hp">Потужність (hp)</option><option value="acc">0–100 km/h</option><option value="cons">Витрата l/100</option><option value="boot">Багажник</option><option value="b">Марка А–Я</option></select></label>
+<label for="q"><span data-i="fQ">Пошук</span><input type="search" id="q" placeholder="Golf, 1.4 TSI, Hybrid, 4x4…" autocomplete="off" enterkeyhint="search"></label>
+<label for="fBrand"><span data-i="fBrandL">Марка</span><select id="fBrand"><option value="" data-i="optAllBrands">Усі марки</option></select></label>
+<label for="fSeg"><span data-i="fSegL">Кузов</span><select id="fSeg"><option value="" data-i="optAll">Усі</option></select></label>
+<label for="fTier"><span data-i="fTierL">Оцінка</span><select id="fTier"><option value="" data-i="optAny">Будь-яка</option><option value="top" data-i="optTop">Рекомендую</option><option value="ok" data-i="optOk">Хороша</option><option value="risk" data-i="optRisk">Тільки окремі версії</option><option value="avoid" data-i="optAvoid">Уникай</option></select></label>
+<label for="fSort"><span data-i="fSortL">Сортувати</span><select id="fSort"><option value="fit" data-i="sFit">Рекомендовані</option><option value="r" data-i="sR">Надійність</option><option value="iq" data-i="sIq">Якість салону</option><option value="p" data-i="sP">Price: від дешевих</option><option value="hp" data-i="sHp">Потужність (hp)</option><option value="acc">0–100 km/h</option><option value="cons" data-i="sCons">Витрата l/100</option><option value="boot" data-i="sBoot">Багажник</option><option value="b" data-i="sB">Марка А–Я</option></select></label>
 </div>
 <div class="checks">
-<label><input type="checkbox" id="cBud"> В межах Budget</label>
-<label><input type="checkbox" id="cRel"> Надійність 4–5</label>
-<label><input type="checkbox" id="cIq"> Салон 4–5 (м'який пластик)</label>
-<label><input type="checkbox" id="cM4"> Manual + 4-cyl petrol</label>
+<label><input type="checkbox" id="cBud"> <span data-i="cBudL">В межах Budget</span></label>
+<label><input type="checkbox" id="cRel"> <span data-i="cRelL">Надійність 4–5</span></label>
+<label><input type="checkbox" id="cIq"> <span data-i="cIqL">Салон 4–5 (м'який пластик)</span></label>
+<label><input type="checkbox" id="cM4"> <span data-i="cM4L">Manual + 4-cyl petrol</span></label>
 <label><input type="checkbox" id="cAwd"> 4x4 / AWD</label>
 </div>
-<div class="countrow"><span class="count" id="count" aria-live="polite"></span><button type="button" class="linkbtn" id="reset">Скинути фільтри</button></div>
+<div class="countrow"><span class="count" id="count" aria-live="polite"></span><button type="button" class="linkbtn" id="reset" data-i="reset">Скинути фільтри</button></div>
 <div class="grid" id="grid"></div>
 </div></section>
 
 <section class="band alt" id="compare"><div class="wrap">
-<h2>Порівняння</h2>
-<p>Натисни «Порівняти» на картках (до 4 моделей). На телефоні таблицю можна гортати вбік.</p>
+<h2 data-i="cmpH">Порівняння</h2>
+<p data-i="cmpP">Натисни «Порівняти» на картках (до 4 моделей). На телефоні таблицю можна гортати вбік.</p>
 <div id="cmpBox"></div>
 </div></section>
 
 <section class="band" id="brands"><div class="wrap">
-<h2>Марки коротко</h2>
-<p>Загальний висновок по марках на вторинному ринку Франції 2026. ADAC Pannenstatistik 2026: група VW, Audi, BMW і Mercedes — серед найменш поломних; у Toyota багато викликів через 12 V акумулятор. TÜV-Report 2026: Mazda 2 — найнадійніша машина, T-Roc — найкращий SUV.</p>
+<h2 data-i="brH">Марки коротко</h2>
+<p data-i="brP">Загальний висновок по марках на вторинному ринку Франції 2026. ADAC Pannenstatistik 2026: група VW, Audi, BMW і Mercedes — серед найменш поломних; у Toyota багато викликів через 12 V акумулятор. TÜV-Report 2026: Mazda 2 — найнадійніша машина, T-Roc — найкращий SUV.</p>
 <div class="bn" id="brandList"></div>
 </div></section>
 
 <section class="band alt" id="engines"><div class="wrap">
-<h2>Engines і gearbox: що брати, що обходити</h2>
-<p>Перед покупкою дивись код мотора (табличка, сервісна книжка або VIN-декодер). Однакова назва «1.4 TSI» може бути EA211 (добре) або EA111 (погано).</p>
-<div class="scroll"><table class="stack" id="engTable"><thead><tr><th>Engine / gearbox</th><th>Де стоїть</th><th>Вердикт</th><th>Чому</th></tr></thead><tbody></tbody></table></div>
+<h2 data-i="engH">Engines і gearbox: що брати, що обходити</h2>
+<p data-i="engP">Перед покупкою дивись код мотора (табличка, сервісна книжка або VIN-декодер). Однакова назва «1.4 TSI» може бути EA211 (добре) або EA111 (погано).</p>
+<div class="scroll"><table class="stack" id="engTable"><thead><tr><th data-i="thEng">Engine / gearbox</th><th data-i="thWhere">Де стоїть</th><th data-i="thVerd">Вердикт</th><th data-i="thWhy">Чому</th></tr></thead><tbody></tbody></table></div>
 </div></section>
 
 <section class="band" id="glossary"><div class="wrap">
-<h2>Словник: як це пишуть у французьких оголошеннях</h2>
-<p>На сайті — міжнародні позначення. На La Centrale, Leboncoin чи в дилера те саме пишуть французькою.</p>
-<div class="scroll"><table class="stack" id="glTable"><thead><tr><th>На сайті</th><th>FR (оголошення)</th><th>Що це</th></tr></thead><tbody></tbody></table></div>
+<h2 data-i="glH">Словник: як це пишуть у французьких оголошеннях</h2>
+<p data-i="glP">На сайті — міжнародні позначення. На La Centrale, Leboncoin чи в дилера те саме пишуть французькою.</p>
+<div class="scroll"><table class="stack" id="glTable"><thead><tr><th data-i="thSite">На сайті</th><th data-i="thFr">FR (оголошення)</th><th data-i="thWhat">Що це</th></tr></thead><tbody></tbody></table></div>
 </div></section>
 
 <section class="band alt" id="buy"><div class="wrap">
-<h2>Як купити без сюрпризів</h2>
+<h2 data-i="buyH">Як купити без сюрпризів</h2>
 <div class="cols">
 <ol class="steps">
-<li><b>Обери точну версію</b>Модель + engine (код) + gearbox + рік. Наприклад: Golf 7.5, 1.4 TSI 125 CZCA, Manual 6 (BVM6), 2017–2018.</li>
-<li><b>Шукай у правильних місцях</b>La Centrale і Leboncoin (найбільше оголошень), Autohero, Aramisauto, Capcar (приватні продавці + гарантія 6 міс., Premium 12 міс., збір ≈299 €), дилерські програми Das WeltAuto, Toyota Occasions, Mazda Selected.</li>
-<li><b>Перевір історію до поїздки</b>Попроси в продавця звіт HistoVec (власники, застава, аварії, пробіги з CT). Для імпорту — carVertical за VIN. Немає HistoVec — не їдь.</li>
-<li><b>Документи</b>Carte grise на ім'я продавця, CT молодший 6 місяців (обов'язково для авто 4+ років), carnet d'entretien, рахунки за timing belt, помпу, зчеплення.</li>
-<li><b>Огляд на холодну</b>Мотор має бути холодним: стук, дим, Check Engine. Під капотом — сліди антифризу, олія, корозія порогів і арок, рівні зазори, шини однієї марки.</li>
-<li><b>Тест-драйв 20+ хвилин</b>Зчеплення не хапає «на самому верху», передачі без хрусту, 3-тя з 1500 rpm без смикання, гальма рівно, кермо прямо. Якщо можна — OBD-сканер (≈20 €) на помилки.</li>
-<li><b>Торгуйся і обери тип продажу</b>Професіонал: гарантія відповідності 2 роки (перші 12 міс. дефект вважається наявним при продажу). Приватна особа: тільки «vices cachés», довести важко. Різниця 1–2 k€ за гарантію часто варта.</li>
-<li><b>Оформлення</b>Carte grise — онлайн через ANTS протягом місяця. Страховка — з дня покупки. Купити можна і до отримання прав: авто реєструють на того, хто його фактично водитиме, або на двох (co-titulaire).</li>
+<li data-i="buy1"><b>Обери точну версію</b>Модель + engine (код) + gearbox + рік. Наприклад: Golf 7.5, 1.4 TSI 125 CZCA, Manual 6 (BVM6), 2017–2018.</li>
+<li data-i="buy2"><b>Шукай у правильних місцях</b>La Centrale і Leboncoin (найбільше оголошень), Autohero, Aramisauto, Capcar (приватні продавці + гарантія 6 міс., Premium 12 міс., збір ≈299 €), дилерські програми Das WeltAuto, Toyota Occasions, Mazda Selected.</li>
+<li data-i="buy3"><b>Перевір історію до поїздки</b>Попроси в продавця звіт HistoVec (власники, застава, аварії, пробіги з CT). Для імпорту — carVertical за VIN. Немає HistoVec — не їдь.</li>
+<li data-i="buy4"><b>Документи</b>Carte grise на ім'я продавця, CT молодший 6 місяців (обов'язково для авто 4+ років), carnet d'entretien, рахунки за timing belt, помпу, зчеплення.</li>
+<li data-i="buy5"><b>Огляд на холодну</b>Мотор має бути холодним: стук, дим, Check Engine. Під капотом — сліди антифризу, олія, корозія порогів і арок, рівні зазори, шини однієї марки.</li>
+<li data-i="buy6"><b>Тест-драйв 20+ хвилин</b>Зчеплення не хапає «на самому верху», передачі без хрусту, 3-тя з 1500 rpm без смикання, гальма рівно, кермо прямо. Якщо можна — OBD-сканер (≈20 €) на помилки.</li>
+<li data-i="buy7"><b>Торгуйся і обери тип продажу</b>Професіонал: гарантія відповідності 2 роки (перші 12 міс. дефект вважається наявним при продажу). Приватна особа: тільки «vices cachés», довести важко. Різниця 1–2 k€ за гарантію часто варта.</li>
+<li data-i="buy8"><b>Оформлення</b>Carte grise — онлайн через ANTS протягом місяця. Страховка — з дня покупки. Купити можна і до отримання прав: авто реєструють на того, хто його фактично водитиме, або на двох (co-titulaire).</li>
 </ol>
 <div>
-<h3>Пробіг: правила</h3>
-<ul>
+<h3 data-i="milH">Пробіг: правила</h3>
+<ul data-i="milUl">
 <li>Норма — 12–15k km на рік. Для авто 2015–2018 оптимально 80–140k km з історією.</li>
 <li>Дуже малий пробіг на старій машині — не бонус: гума, сальники, гальма і АКБ старіють від стояння.</li>
 <li>Великий пробіг з повною історією у дилера кращий, ніж малий без жодного документа.</li>
 <li>Надійні мотори (EA211, Skyactiv-G, Toyota Hybrid) спокійно проходять 250–300k km при ТО кожні 15k km.</li>
 </ul>
-<h3 class="mt">Червоні прапорці</h3>
-<ul>
+<h3 class="mt" data-i="redH">Червоні прапорці</h3>
+<ul data-i="redUl">
 <li>CT прострочений або з «défaillances majeures».</li>
 <li>Імпорт з дірою в історії на кілька років.</li>
 <li>Продавець не дає VIN або HistoVec.</li>
@@ -146,60 +158,60 @@
 </div></section>
 
 <section class="band" id="costs"><div class="wrap">
-<h2>Витрати першого року</h2>
+<h2 data-i="costH">Витрати першого року</h2>
 <div class="cols">
 <div>
-<h3>Carte grise, Île-de-France 2026</h3>
-<p>68,95 € за CV (54,95 € + 14 € доплата до 31.12.2026) + ≈13,76 € збори. CV — поле P.6 у carte grise. В інших регіонах ставка за CV інша — перевір на сайті ANTS.</p>
-<div class="scroll"><table id="cgTable"><thead><tr><th>CV</th><th class="r">Ціна</th></tr></thead><tbody></tbody></table></div>
-<h3 class="mt">Страховка молодого водія (оцінка)</h3>
-<p>Надбавка jeune conducteur: +100% у 1-й рік, +50% у 2-й, +25% у 3-й, далі бонус. Без аварій:</p>
-<div class="scroll"><table><thead><tr><th>Рік</th><th class="r">Tous risques</th><th class="r">Tiers étendu</th></tr></thead><tbody>
-<tr><td>1-й</td><td class="r">≈1 800 €</td><td class="r">≈1 100 €</td></tr>
-<tr><td>2-й</td><td class="r">≈1 280 €</td><td class="r">≈785 €</td></tr>
-<tr><td>3-й</td><td class="r">≈1 010 €</td><td class="r">≈620 €</td></tr>
-<tr><td>4-й</td><td class="r">≈765 €</td><td class="r">≈470 €</td></tr>
+<h3 data-i="cgH">Carte grise, Île-de-France 2026</h3>
+<p data-i="cgP">68,95 € за CV (54,95 € + 14 € доплата до 31.12.2026) + ≈13,76 € збори. CV — поле P.6 у carte grise. В інших регіонах ставка за CV інша — перевір на сайті ANTS.</p>
+<div class="scroll"><table id="cgTable"><thead><tr><th>CV</th><th class="r" data-i="thPrice">Ціна</th></tr></thead><tbody></tbody></table></div>
+<h3 class="mt" data-i="insH">Страховка молодого водія (оцінка)</h3>
+<p data-i="insP">Надбавка jeune conducteur: +100% у 1-й рік, +50% у 2-й, +25% у 3-й, далі бонус. Без аварій:</p>
+<div class="scroll"><table><thead><tr><th data-i="thYear">Рік</th><th class="r">Tous risques</th><th class="r">Tiers étendu</th></tr></thead><tbody>
+<tr><td data-i="y1">1-й</td><td class="r">≈1 800 €</td><td class="r">≈1 100 €</td></tr>
+<tr><td data-i="y2">2-й</td><td class="r">≈1 280 €</td><td class="r">≈785 €</td></tr>
+<tr><td data-i="y3">3-й</td><td class="r">≈1 010 €</td><td class="r">≈620 €</td></tr>
+<tr><td data-i="y4">4-й</td><td class="r">≈765 €</td><td class="r">≈470 €</td></tr>
 </tbody></table></div>
-<p class="note">Приклад для компактного авто ≈125 hp від бази 900 € (tous risques) і 550 € (tiers étendu). Вписати молодого водія «другим», коли він насправді основний, — це обман страховика: у разі аварії можуть відмовити у виплаті.</p>
+<p class="note" data-i="insNote">Приклад для компактного авто ≈125 hp від бази 900 € (tous risques) і 550 € (tiers étendu). Вписати молодого водія «другим», коли він насправді основний, — це обман страховика: у разі аварії можуть відмовити у виплаті.</p>
 </div>
 <div>
-<h3>Пальне на рік</h3>
-<p>Підстав свій пробіг і витрату з картки моделі:</p>
+<h3 data-i="fuelH">Пальне на рік</h3>
+<p data-i="fuelP">Підстав свій пробіг і витрату з картки моделі:</p>
 <div class="calc">
-<label for="km">km на рік<input type="number" id="km" value="15000" min="0" max="100000" step="500" inputmode="numeric"></label>
+<label for="km"><span data-i="kmL">km на рік</span><input type="number" id="km" value="15000" min="0" max="100000" step="500" inputmode="numeric"></label>
 <label for="lp">l/100 km<input type="number" id="lp" value="6.5" min="2" max="15" step="0.1" inputmode="decimal"></label>
 <label for="pp">€/l (SP95-E10)<input type="number" id="pp" value="1.80" min="0.5" max="3" step="0.01" inputmode="decimal"></label>
 </div>
 <div class="res" id="fuelRes" style="margin-top:12px">—</div>
 <p id="fuelSub"></p>
-<h3 class="mt">Перший рік разом (приклад: хетчбек 6 CV)</h3>
+<h3 class="mt" data-i="yearH">Перший рік разом (приклад: хетчбек 6 CV)</h3>
 <div class="scroll"><table id="yearTable"><tbody></tbody></table></div>
-<p class="note">ТО — оцінка для незалежного сервісу: масло, фільтри, гальма, дрібниці. Якщо timing belt треба міняти одразу — ще ≈500–700 €.</p>
+<p class="note" data-i="yearNote">ТО — оцінка для незалежного сервісу: масло, фільтри, гальма, дрібниці. Якщо timing belt треба міняти одразу — ще ≈500–700 €.</p>
 </div>
 </div>
 </div></section>
 </main>
 
 <footer class="band alt" id="sources"><div class="wrap">
-<h2>Джерела</h2>
-<p>Ціни 2026: путівники «Budget 2026» на <a href="https://www.ad.fr" rel="noopener">ad.fr</a>, оголошення La Centrale, Autohero, Aramisauto. Відгуки власників і оцінки /20: <a href="https://www.fiches-auto.fr" rel="noopener">fiches-auto.fr</a>. Надійність: TÜV-Report 2026 (<a href="https://www.tuev-verband.de" rel="noopener">VdTÜV</a>), ADAC Pannenstatistik 2026 (<a href="https://www.adac.de" rel="noopener">adac.de</a>). Розширена гарантія PureTech 10 років / 175k km (машини 04/2014–06/2022). Історія авто: <a href="https://histovec.interieur.gouv.fr" rel="noopener">HistoVec</a>. Гарантії й carte grise: <a href="https://www.service-public.fr" rel="noopener">service-public.fr</a>.</p>
-<p>Фото: <a href="https://commons.wikimedia.org" rel="noopener">Wikimedia Commons</a>, вільні ліцензії (CC BY, CC BY-SA, CC0, суспільне надбання). Автор і ліцензія — під кожним фото, клік веде на сторінку файлу. Фото показують покоління моделі, а не конкретну версію чи комплектацію.</p>
-<p>Характеристики — дані виробника для еталонної версії (NEDC/WLTP, можуть відрізнятися ±5–10%). Ціни й наявність змінюються щотижня — перед покупкою звіряй з оголошеннями. Це довідник, а не професійна експертиза. Стан: листопад 2026.</p>
+<h2 data-i="srcH">Джерела</h2>
+<p data-i="src1">Ціни 2026: путівники «Budget 2026» на <a href="https://www.ad.fr" rel="noopener">ad.fr</a>, оголошення La Centrale, Autohero, Aramisauto. Відгуки власників і оцінки /20: <a href="https://www.fiches-auto.fr" rel="noopener">fiches-auto.fr</a>. Надійність: TÜV-Report 2026 (<a href="https://www.tuev-verband.de" rel="noopener">VdTÜV</a>), ADAC Pannenstatistik 2026 (<a href="https://www.adac.de" rel="noopener">adac.de</a>). Розширена гарантія PureTech 10 років / 175k km (машини 04/2014–06/2022). Історія авто: <a href="https://histovec.interieur.gouv.fr" rel="noopener">HistoVec</a>. Гарантії й carte grise: <a href="https://www.service-public.fr" rel="noopener">service-public.fr</a>.</p>
+<p data-i="src2">Фото: <a href="https://commons.wikimedia.org" rel="noopener">Wikimedia Commons</a>, вільні ліцензії (CC BY, CC BY-SA, CC0, суспільне надбання). Автор і ліцензія — під кожним фото, клік веде на сторінку файлу. Фото показують покоління моделі, а не конкретну версію чи комплектацію.</p>
+<p data-i="src3">Характеристики — дані виробника для еталонної версії (NEDC/WLTP, можуть відрізнятися ±5–10%). Ціни й наявність змінюються щотижня — перед покупкою звіряй з оголошеннями. Це довідник, а не професійна експертиза. Стан: листопад 2026.</p>
 </div></footer>
 
-<div class="cbar" id="cbar" role="region" aria-label="Порівняння"><a href="#compare">Порівняння <span id="cbarN">0</span></a><button type="button" id="cClear" aria-label="Очистити порівняння" title="Очистити">×</button></div>
+<div class="cbar" id="cbar" role="region" aria-label="Порівняння" data-i-a="cmpH"><a href="#compare"><span data-i="cmpH">Порівняння</span> <span id="cbarN">0</span></a><button type="button" id="cClear" aria-label="Очистити порівняння" data-i-a="cClearA" title="Очистити">×</button></div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
-<button type="button" class="totop" id="totop" aria-label="Нагору">↑</button>
+<button type="button" class="totop" id="totop" aria-label="Нагору" data-i-a="totopA">↑</button>
 <div class="mp" id="mp" role="dialog" aria-modal="true" aria-labelledby="mpT" hidden>
-<div class="mpbar"><button type="button" class="mpback" id="mpBack">← Усі моделі</button><span class="mpbt" id="mpBarT"></span><button type="button" class="linkbtn" id="mpShare">Поділитися</button></div>
+<div class="mpbar"><button type="button" class="mpback" id="mpBack" data-i="mpBack">← Усі моделі</button><span class="mpbt" id="mpBarT"></span><div class="lang" role="group" aria-label="Мова / Langue"><button type="button" data-lang="uk" aria-pressed="true" lang="uk" title="Українська">UA</button><button type="button" data-lang="fr" aria-pressed="false" lang="fr" title="Français">FR</button></div><button type="button" class="linkbtn" id="mpShare" data-i="mpShare">Поділитися</button></div>
 <div class="wrap mpbody" id="mpBody"></div>
 </div>
-<dialog class="lb" id="lb" aria-label="Фото моделі">
+<dialog class="lb" id="lb" aria-label="Фото моделі" data-i-a="lbA">
 <div class="lbin">
 <img id="lbImg" alt="">
-<button type="button" class="lbnav prev" id="lbPrev" aria-label="Попереднє фото">‹</button>
-<button type="button" class="lbnav next" id="lbNext" aria-label="Наступне фото">›</button>
-<button type="button" class="lbx" id="lbClose" aria-label="Закрити">×</button>
+<button type="button" class="lbnav prev" id="lbPrev" aria-label="Попереднє фото" data-i-a="lbPrevA">‹</button>
+<button type="button" class="lbnav next" id="lbNext" aria-label="Наступне фото" data-i-a="lbNextA">›</button>
+<button type="button" class="lbx" id="lbClose" aria-label="Закрити" data-i-a="lbCloseA">×</button>
 <p class="lbcap" id="lbCap"></p>
 </div>
 </dialog>
