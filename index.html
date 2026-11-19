@@ -50,7 +50,7 @@
 </div>
 <div class="chart" id="chart" aria-label="Ціни 2026 на топ-12 версій"></div>
 <div class="axis" id="axis" aria-hidden="true"><span></span><div></div><span></span></div>
-<p class="note">Топ-12 загалом: найкращий баланс надійності, ціни, салону і запчастин. Смуга — типова ціна 2026 у Франції (Prix TTC) для вказаної версії з пробігом до ~130k km. Помаранчеві — досяжні з обраним Budget. Натисни рядок — відкриється розбір.</p>
+<p class="note">Топ-12 загалом: найкращий баланс надійності, ціни, салону і запчастин. Смуга — типова ціна 2026 у Франції (Prix TTC) для вказаної версії з пробігом до ~130k km. Помаранчеві — досяжні з обраним Budget. Натисни рядок — відкриється сторінка моделі.</p>
 </div>
 </header>
 
@@ -68,17 +68,18 @@
 
 <section class="band" id="catalog"><div class="wrap">
 <h2>Усі моделі: розбір і характеристики</h2>
-<p>Engines позначені: <span class="v ok">+ надійний</span> · <span class="v warn">! з нюансами</span> · <span class="v bad">× уникай</span>. Тільки моделі, які реально знайти за 7–20 k€; мінівенів і бусиків немає. Price — діапазон 2026 у Франції для всього покоління в k€; «≈» — оцінка, де немає зведених даних. Характеристики — для еталонної (рекомендованої) версії, дані виробника.</p>
+<p>Engines позначені: <span class="v ok">+ надійний</span> · <span class="v warn">! з нюансами</span> · <span class="v bad">× уникай</span>. Тільки моделі, які реально знайти за 7–20 k€; мінівенів і бусиків немає. Price — діапазон 2026 у Франції для всього покоління в k€; «≈» — оцінка, де немає зведених даних. Характеристики — для еталонної (рекомендованої) версії, дані виробника. Салон 1–5: 5 — м'які матеріали майже скрізь, 3 — м'який верх панелі, решта твердий пластик, 1 — дешевий пластик, що скрипить. Натисни на модель — відкриється її сторінка: усі мотори, коробки, салон, фото зовні й усередині, слабкі місця й альтернативи.</p>
 <div class="filters">
 <label for="q">Пошук<input type="search" id="q" placeholder="Golf, 1.4 TSI, Hybrid, 4x4…" autocomplete="off" enterkeyhint="search"></label>
 <label for="fBrand">Марка<select id="fBrand"><option value="">Усі марки</option></select></label>
 <label for="fSeg">Кузов<select id="fSeg"><option value="">Усі</option></select></label>
 <label for="fTier">Оцінка<select id="fTier"><option value="">Будь-яка</option><option value="top">Рекомендую</option><option value="ok">Хороша</option><option value="risk">Тільки окремі версії</option><option value="avoid">Уникай</option></select></label>
-<label for="fSort">Сортувати<select id="fSort"><option value="fit">Рекомендовані</option><option value="r">Надійність</option><option value="p">Price: від дешевих</option><option value="hp">Потужність (hp)</option><option value="acc">0–100 km/h</option><option value="cons">Витрата l/100</option><option value="boot">Багажник</option><option value="b">Марка А–Я</option></select></label>
+<label for="fSort">Сортувати<select id="fSort"><option value="fit">Рекомендовані</option><option value="r">Надійність</option><option value="iq">Якість салону</option><option value="p">Price: від дешевих</option><option value="hp">Потужність (hp)</option><option value="acc">0–100 km/h</option><option value="cons">Витрата l/100</option><option value="boot">Багажник</option><option value="b">Марка А–Я</option></select></label>
 </div>
 <div class="checks">
 <label><input type="checkbox" id="cBud"> В межах Budget</label>
 <label><input type="checkbox" id="cRel"> Надійність 4–5</label>
+<label><input type="checkbox" id="cIq"> Салон 4–5 (м'який пластик)</label>
 <label><input type="checkbox" id="cM4"> Manual + 4-cyl petrol</label>
 <label><input type="checkbox" id="cAwd"> 4x4 / AWD</label>
 </div>
@@ -182,15 +183,31 @@
 <footer class="band alt" id="sources"><div class="wrap">
 <h2>Джерела</h2>
 <p>Ціни 2026: путівники «Budget 2026» на <a href="https://www.ad.fr" rel="noopener">ad.fr</a>, оголошення La Centrale, Autohero, Aramisauto. Відгуки власників і оцінки /20: <a href="https://www.fiches-auto.fr" rel="noopener">fiches-auto.fr</a>. Надійність: TÜV-Report 2026 (<a href="https://www.tuev-verband.de" rel="noopener">VdTÜV</a>), ADAC Pannenstatistik 2026 (<a href="https://www.adac.de" rel="noopener">adac.de</a>). Розширена гарантія PureTech 10 років / 175k km (машини 04/2014–06/2022). Історія авто: <a href="https://histovec.interieur.gouv.fr" rel="noopener">HistoVec</a>. Гарантії й carte grise: <a href="https://www.service-public.fr" rel="noopener">service-public.fr</a>.</p>
+<p>Фото: <a href="https://commons.wikimedia.org" rel="noopener">Wikimedia Commons</a>, вільні ліцензії (CC BY, CC BY-SA, CC0, суспільне надбання). Автор і ліцензія — під кожним фото, клік веде на сторінку файлу. Фото показують покоління моделі, а не конкретну версію чи комплектацію.</p>
 <p>Характеристики — дані виробника для еталонної версії (NEDC/WLTP, можуть відрізнятися ±5–10%). Ціни й наявність змінюються щотижня — перед покупкою звіряй з оголошеннями. Це довідник, а не професійна експертиза. Стан: листопад 2026.</p>
 </div></footer>
 
 <div class="cbar" id="cbar" role="region" aria-label="Порівняння"><a href="#compare">Порівняння <span id="cbarN">0</span></a><button type="button" id="cClear" aria-label="Очистити порівняння" title="Очистити">×</button></div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <button type="button" class="totop" id="totop" aria-label="Нагору">↑</button>
+<div class="mp" id="mp" role="dialog" aria-modal="true" aria-labelledby="mpT" hidden>
+<div class="mpbar"><button type="button" class="mpback" id="mpBack">← Усі моделі</button><span class="mpbt" id="mpBarT"></span><button type="button" class="linkbtn" id="mpShare">Поділитися</button></div>
+<div class="wrap mpbody" id="mpBody"></div>
+</div>
+<dialog class="lb" id="lb" aria-label="Фото моделі">
+<div class="lbin">
+<img id="lbImg" alt="">
+<button type="button" class="lbnav prev" id="lbPrev" aria-label="Попереднє фото">‹</button>
+<button type="button" class="lbnav next" id="lbNext" aria-label="Наступне фото">›</button>
+<button type="button" class="lbx" id="lbClose" aria-label="Закрити">×</button>
+<p class="lbcap" id="lbCap"></p>
+</div>
+</dialog>
 
 <script src="data/models.js"></script>
 <script src="data/content.js"></script>
+<script src="data/interior.js"></script>
+<script src="data/photos.js"></script>
 <script src="assets/app.js"></script>
 </body>
 </html>
