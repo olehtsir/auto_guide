@@ -379,3 +379,11 @@ footer p { max-width: 90ch; }
   .mp { position: static; overflow: visible; }
   .card { break-inside: avoid; content-visibility: visible; }
 }
+
+/* Джерела на сторінці моделі */
+.srcs { list-style: none; padding: 0; margin: 8px 0 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr)); gap: 8px 16px; }
+.mpsec .srcs li { padding: 10px 12px; border: 1px solid var(--line); border-radius: 6px; margin: 0; }
+.srcs a { font-weight: 600; text-decoration: none; }
+.srcs a::after { content: " ↗"; font-weight: 400; }
+.srcs a:hover { text-decoration: underline; }
+.srcs span { display: block; font-size: 13.5px; color: var(--mut); margin-top: 2px; }
